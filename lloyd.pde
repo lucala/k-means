@@ -44,7 +44,7 @@ void setup() {
 }
 
 void draw() {
-	background(50); //deletes previously drawn objects
+	background(50);
 	stroke(255);
 	lights();
 	String s = "1=True clusters, 2=predicted clusters, 3=all white.";
@@ -55,12 +55,10 @@ void draw() {
 	text(s, 10, 10, 500, 500);  // Text wraps within text box
 
 	if ((mousePressed == true) && (mouseY != pmouseY && mouseX != pmouseX)) {
-    //angle = atan2(mouseY-pmouseY, mouseX-pmouseX);
 		orthMouseVec = new PVector(mouseY-pmouseY, -(mouseX-pmouseX), 0); // this is axis of rotation
 		orthMouseVec.normalize();
   }
 
-	//rotate( -angle, orthMouseVec.x, orthMouseVec.y, orthMouseVec.z );
 	translate(x,y,z);
 	rotate(1, orthMouseVec.x, orthMouseVec.y, orthMouseVec.z);
   line(0, 0, 0, coordLen, 0, 0);
