@@ -10,7 +10,7 @@ color[] colors = {
 };
 
 // nr of clusters to generate
-nrClusters = 6;
+int nrClusters = 6;
 // range of mean vector (-pRange, pRange)
 int pRange = 250;
 // range of std deviation (1, dRange)
@@ -23,23 +23,23 @@ float x,y,z,t;
 float angle;
 // 1=true colors, 2=predicted colors, 3=all white
 int colorClusters;
-bool spaceBarPressed;
+boolean spaceBarPressed;
 LloydAlgo lloyd;
 
 void setup() {
-	size(window.innerWidth, window.innerHeight, P3D);
+	size(1000, 1000, P3D);
 	stroke(255);
 	x = width/2;
 	y = height/2;
 	z = 0;
 
 	for (int cid = 0; cid < nrClusters; cid++){
-		nrPoints = random(300,500);
+		int nrPoints = (int)random(300,500);
 		clusters[cid] = new Cluster(pRange, dRange, nrPoints, colors[cid]);
 	}
 
 	//maybe add heuristic algo here to find nrClusters
-	suggestedNrClusters = nrClusters;
+	int suggestedNrClusters = nrClusters;
 	lloyd = new LloydAlgo(suggestedNrClusters, pRange);
 }
 
@@ -65,8 +65,8 @@ void draw() {
 	line(0, 0, 0, 0, coordLen, 0);
 	line(0, 0, 0, 0, 0, coordLen);
 	noStroke();
-	for (cluster : clusters){
-		cluster.display();
+	for (Cluster c : clusters){
+		c.display();
 	}
 
 	if (spaceBarPressed){
@@ -82,7 +82,7 @@ void draw() {
 class LloydAlgo{
 	PVector[] centroids;
 
-	LloydAlgo(nrCentroids, mltplier){
+	LloydAlgo(int nrCentroids, int mltplier){
 		// initialize centroids randomly
 		centroids = new PVector[nrCentroids];
 		for (int i = 0; i < nrCentroids; i++){
@@ -93,9 +93,9 @@ class LloydAlgo{
 			for (int j = 0; j < clusters[i].data.length; j++){
 				//compute distance to each centroid, belongs to centroid with smallest dist
 				PVector point = clusters[i].data[j];
-				smallestDist = 1e9;
+				float smallestDist = 1e9;
 				for (int c = 0; c < centroids.length; c++){
-					dist = PVector.dist(centroids[c], point);
+					float dist = PVector.dist(centroids[c], point);
 					if (dist < smallestDist){
 						smallestDist = dist;
 						clusters[i].cID[j] = c;
@@ -129,16 +129,16 @@ class LloydAlgo{
 			for (int j = 0; j < clusters[i].data.length; j++){
 				//compute distance to each centroid, belongs to centroid with smallest dist
 				PVector point = clusters[i].data[j];
-				smallestDist = 1e9;
+				float smallestDist = 1e9;
 				for (int c = 0; c < centroids.length; c++){
-					dist = PVector.dist(centroids[c], point);
+					float dist = PVector.dist(centroids[c], point);
 					if (dist < smallestDist){
 						smallestDist = dist;
 						clusters[i].cID[j] = c;
 					}
 				}
 				// this data point can be added to mean vec of its predicted centroid
-				currCentroid = clusters[i].cID[j];
+				int currCentroid = clusters[i].cID[j];
 				nrEntries[currCentroid]++;
 				sum[currCentroid].add(point);
 			}
@@ -160,13 +160,13 @@ class Cluster{
 
 	Cluster(int meanRange, int stdRange, int nrPoints, color cin){
 		clColor = cin;
-		meanVec = new PVector(random(-meanRange, meanRange), random(-meanRange, meanRange), random(-meanRange, meanRange));
-		stdVec = new PVector(random(1, stdRange), random(1, stdRange), random(1, stdRange));
+		PVector meanVec = new PVector(random(-meanRange, meanRange), random(-meanRange, meanRange), random(-meanRange, meanRange));
+		PVector stdVec = new PVector(random(1, stdRange), random(1, stdRange), random(1, stdRange));
 		data = new PVector[nrPoints];
 		cID = new int[nrPoints];
 		for (int i = 0; i < nrPoints; i++){
-			gauss3D = new PVector(randomGaussian(), randomGaussian(), randomGaussian());
-			gauss3DScaled = new PVector(gauss3D.x*stdVec.x, gauss3D.y*stdVec.y, gauss3D.z*stdVec.z);
+			PVector gauss3D = new PVector(randomGaussian(), randomGaussian(), randomGaussian());
+			PVector gauss3DScaled = new PVector(gauss3D.x*stdVec.x, gauss3D.y*stdVec.y, gauss3D.z*stdVec.z);
 			data[i] = PVector.add(meanVec, gauss3DScaled);
 		}
 	}
